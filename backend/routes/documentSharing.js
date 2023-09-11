@@ -17,7 +17,7 @@ const checkNumbers = (arr) => {
     return allNumbersAreValid;
   };
 
-//Access can be Provided by owner only
+//Route 1: Providing Access to Mobile Numbers. Access can be Provided by owner only
 route.post('/provideAccess', async(req, res)=>{
     try{
         const {mobilenum, password, documentId, mobNumbers}=req.body;
@@ -29,6 +29,7 @@ route.post('/provideAccess', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});
@@ -54,7 +55,7 @@ route.post('/provideAccess', async(req, res)=>{
     }
 })
 
-
+//Route 2: Getting Users mobilenumbers which have access to document
 route.get('/getDocumentAccessors', async(req, res)=>{
     try{
         const {documentId, mobilenum, password}=req.body;
@@ -62,6 +63,7 @@ route.get('/getDocumentAccessors', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});
@@ -82,6 +84,7 @@ route.get('/getDocumentAccessors', async(req, res)=>{
     }
 })
 
+//Route 3: Getting Accessible Documents for User Credentials excluding documents in which user is owner
 route.get('/getAccessableDocuments', async(req, res)=>{
     try{
         const {mobilenum, password}=req.body;
@@ -89,6 +92,7 @@ route.get('/getAccessableDocuments', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});

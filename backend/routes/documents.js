@@ -18,10 +18,11 @@ const createDocumentValidationRules = [
       .notEmpty().withMessage('Document cannot be empty')
 ];
 
-
+//Route1: Creating Document using owner credentials and data
 route.post('/createDocument',createDocumentValidationRules, async(req,res)=>{
     
     try{
+        //Validation using express validators
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -32,7 +33,7 @@ route.post('/createDocument',createDocumentValidationRules, async(req,res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
-
+        //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});
@@ -57,6 +58,7 @@ route.post('/createDocument',createDocumentValidationRules, async(req,res)=>{
     }
 })
 
+//Route 2:Getting Documents owned by User Credentials
 route.get('/getDocuments-byUserId', async(req, res)=>{
     try{
         const {mobilenum, password, offset, limit}=req.body;
@@ -64,10 +66,13 @@ route.get('/getDocuments-byUserId', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});
         }
+
+        //Added PAgination , i.e. offset=pagenumber, limit=pagesize
         const documents=await Document.find({owner:user._id}).skip(offset*limit).limit(limit).select('name');
         if(!documents){
             return res.status(500).json({error:true, msg:'Internal Server Error'});
@@ -80,6 +85,7 @@ route.get('/getDocuments-byUserId', async(req, res)=>{
     }
 })
 
+//Route 3: Deleting Document : Only Owner Access
 route.post('/deleteDocument', async(req, res)=>{
     try{
         const {mobilenum, password, documentId}=req.body;
@@ -87,6 +93,7 @@ route.post('/deleteDocument', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});
@@ -111,6 +118,7 @@ route.post('/deleteDocument', async(req, res)=>{
     }
 })
 
+//Route 4: View Document if User has access either its owner or have access of other documents
 route.get('/viewdocument', async(req, res)=>{
     try{
         const {documentId, mobilenum, password}=req.body;
@@ -118,6 +126,7 @@ route.get('/viewdocument', async(req, res)=>{
         if(!user) {
             return res.status(404).json({error:true, msg:'User Not Found'});
         }
+         //Authenticating User
         const comparedPassword=await bcrypt.compare(password, user.password)
         if(!comparedPassword){
             return res.status(401).json({error:true, msg:'User not authenticated'});

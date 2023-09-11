@@ -7,7 +7,7 @@ const { body, validationResult } = require("express-validator");
 
 const route = express.Router();
 
-//Route1:  Creating User Signup
+//Route1:  Creating User Signup Using bcrypt hashing for security
 route.post(
   "/createuser",
     [
@@ -79,6 +79,7 @@ route.post(
   }
 );
 
+//Route 2: Getting all users list.
 route.get('/getAllUsers', async(req, res)=>{
     try{
       const {offset, limit}=req.body;
