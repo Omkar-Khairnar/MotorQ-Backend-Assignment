@@ -42,7 +42,7 @@ route.post('/provideAccess', async(req, res)=>{
         if(!document.owner.equals(user._id)){
             return res.status(401).json({error:true, msg:'Document Access Denied'});
         }
-
+        //Updating the permissible Users
         let updated= await Document.findByIdAndUpdate(documentId,{permissibleUsers:mobNumbers});
         if(!updated){
             return res.status(500).json({error:true, msg:'Internal Server Error'});
@@ -72,7 +72,7 @@ route.get('/getDocumentAccessors', async(req, res)=>{
         if(!document.owner.equals(user._id)){
             return res.status(401).json({error:true, msg:'Document Access Denied'});
         }
-
+        //excluding files in which user is owner
         const data= document.permissibleUsers.filter((ele)=>{
             return ele != mobilenum;
         })
