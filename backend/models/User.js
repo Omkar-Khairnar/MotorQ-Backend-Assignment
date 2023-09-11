@@ -13,7 +13,7 @@ const UserSchema= new Schema({
     password:{
         type:String,
         require:false,
-        // minLength:[10,'Password should have minimum 8 characters']
+        
     }
 },
     {timestamps:true}
